@@ -195,6 +195,7 @@ body {
   <button onclick="loadService('civil')" id="btn-civil">Electrician</button>
   <button onclick="loadService('interior')" id="btn-interior">Plumbing</button>
   <button onclick="loadService('renovation')" id="btn-renovation">AC Technician</button>
+  <button onclick="loadService('wheeler')" id="btn-wheeler">Four Wheeler PDI</button>
 </div>
 <!-- HERO -->
 <div class="hero">
@@ -301,7 +302,38 @@ const data = {
         img: "images/gas.jpg"
       }
     ]
-  }
+  },
+
+  /* 🚗 4 WHEELER PDI */
+wheeler: {
+  title: "4 Wheeler PDI Services",
+  description: "Comprehensive Pre-Delivery Inspection (PDI) services to ensure your car is in perfect condition before delivery.",
+
+  sections: [
+    {
+      title: "Exterior Inspection",
+      text: "Detailed check of car body, paint quality, dents, scratches, and alignment before delivery.",
+      img: "images/ext.webp"
+    },
+    {
+      title: "Interior & Features Check",
+      text: "Inspection of dashboard, seats, infotainment system, AC, and all interior functionalities.",
+      img: "images/int.avif"
+    },
+    {
+      title: "Engine & Mechanical Check",
+      text: "Verification of engine condition, fluid levels, battery health, and overall mechanical performance.",
+      img: "images/ingine.webp"
+    },
+    {
+      title: "Road Test & Documentation",
+      text: "Test drive evaluation along with checking documents, VIN number, and delivery readiness.",
+      img: "images/road.jpg"
+    }
+  ]
+}
+
+
 
 };
 
@@ -318,7 +350,7 @@ const data = {
     service.sections.forEach(section => {
       container.innerHTML += `
         <div class="section">
-          <img src="${section.img}">
+          <img src="${section.img}" alt="${section.title}">
           <div class="text">
             <h2>${section.title}</h2>
             <p>${section.text}</p>
@@ -331,16 +363,23 @@ const data = {
       btn.classList.remove("active");
     });
 
-    document.getElementById("btn-" + type).classList.add("active");
+    const activeBtn = document.getElementById("btn-" + type);
+    if (activeBtn) {
+      activeBtn.classList.add("active");
+    }
   }
 
-  // 🔥 IMPORTANT: make function global
   window.loadService = loadService;
 
-  // ✅ DEFAULT LOAD (Plumbing first)
-  loadService("interior");
+  /* ✅ Load service from URL */
+  const params = new URLSearchParams(window.location.search);
+  const serviceType = params.get("type");
 
-  window.addEventListener("DOMContentLoaded", () => {
+  if (serviceType && data[serviceType]) {
+    loadService(serviceType);
+  } else {
+    loadService("interior"); // default if no type in URL
+  }
 
   Promise.all([
     fetch("header.html").then(res => res.text()),
@@ -348,15 +387,11 @@ const data = {
     fetch("contact.html").then(res => res.text())
   ])
   .then(([header, footer, contact]) => {
-
     document.getElementById("header").innerHTML = header;
     document.getElementById("footer").innerHTML = footer;
     document.getElementById("contact-container").innerHTML = contact;
-
   })
   .catch(err => console.log("Error loading components", err));
-
-});
 
 });
 </script>
